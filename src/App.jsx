@@ -84,8 +84,8 @@ export default function BoatRacePredictor() {
       const prompt = `以下は競艇公式サイトの3連単オッズページのHTMLです。
 このHTMLから3連単オッズの人気順上位10点を抽出してください。
 
-HTML（先頭5000文字）:
-${html.slice(0, 5000)}
+HTML（先頭8000文字）:
+${html.slice(0, 8000)}
 
 以下のJSON形式のみで返答してください：
 {
@@ -116,8 +116,8 @@ ${html.slice(0, 5000)}
       const prompt = `以下は競艇公式サイトの直前情報ページのHTMLです。
 このHTMLから展示タイム・スタート展示・天候情報を抽出してください。
 
-HTML（先頭5000文字）:
-${html.slice(0, 5000)}
+HTML（先頭8000文字）:
+${html.slice(0, 8000)}
 
 以下のJSON形式のみで返答してください：
 {

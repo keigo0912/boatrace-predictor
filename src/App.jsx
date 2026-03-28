@@ -20,6 +20,14 @@ const TODAY = (() => {
   return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`;
 })();
 
+// boatrace.jpからHTMLを直接取得してパース
+async function fetchBoatraceHTML(url) {
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const res = await fetch(proxyUrl);
+  const data = await res.json();
+  return data.contents || "";
+}
+
 async function callClaude(userPrompt, systemPrompt) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -34,7 +42,6 @@ async function callClaude(userPrompt, systemPrompt) {
       max_tokens: 1500,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
-      tools: [{ type: "web_search_20250305", name: "web_search" }],
     }),
   });
   const data = await res.json();
@@ -70,56 +77,53 @@ export default function BoatRacePredictor() {
     setLoading(l => ({ ...l, odds: true }));
     setError(null);
     try {
-      const prompt = `競艇の3連単オッズ情報を取得してください。
-以下のURLをweb_searchで検索してください：
-${oddsUrl}
+      // HTMLを直接取得
+      const html = await fetchBoatraceHTML(oddsUrl);
+      
+      // AIにHTMLを解析させる
+      const prompt = `以下は競艇公式サイトの3連単オッズページのHTMLです。
+このHTMLから3連単オッズの人気順上位10点を抽出してください。
 
-また「boatrace ${venueName} ${raceNo}R オッズ ${TODAY}」でも検索して情報を補完してください。
+HTML（先頭5000文字）:
+${html.slice(0, 5000)}
 
-取得した情報を以下のJSON形式のみで返答してください：
+以下のJSON形式のみで返答してください：
 {
-  "raceInfo": "レース名やグレード",
+  "raceInfo": "レース情報",
   "topOdds": [
     {"rank": 1, "combination": "1-2-3", "odds": "5.6"},
     {"rank": 2, "combination": "1-3-2", "odds": "8.1"},
-    {"rank": 3, "combination": "1-2-4", "odds": "9.3"},
-    {"rank": 4, "combination": "1-4-2", "odds": "12.5"},
-    {"rank": 5, "combination": "2-1-3", "odds": "15.2"},
-    {"rank": 6, "combination": "1-3-4", "odds": "18.7"},
-    {"rank": 7, "combination": "1-4-3", "odds": "21.0"},
-    {"rank": 8, "combination": "2-1-4", "odds": "25.3"},
-    {"rank": 9, "combination": "3-1-2", "odds": "31.0"},
-    {"rank": 10, "combination": "1-2-5", "odds": "35.5"}
+    ...10点
   ],
   "favoriteBoat": 1,
-  "summary": "1号艇が断然人気。1-2-3が最も支持されている。"
-}
+  "summary": "オッズの傾向コメント（60字以内）"
+}`;
 
-※情報が取得できない場合でも、競艇の一般的な傾向に基づいてダミーデータを返してください。`;
-
-      const result = await callClaude(prompt, "あなたは競艇情報収集AIです。web_searchを使って情報を取得し、JSON形式のみで回答してください。情報が取得できない場合は競艇の一般的な傾向に基づくダミーデータを返してください。");
+      const result = await callClaude(prompt, "あなたは競艇HTMLパーサーAIです。HTMLから必要な情報を抽出してJSON形式のみで回答してください。");
       setOddsData(parseJSON(result));
       setStep(1);
     } catch (e) {
       setError("オッズ取得失敗: " + e.message);
     }
     setLoading(l => ({ ...l, odds: false }));
-  }, [oddsUrl, venueName, raceNo]);
-   const fetchBefore = useCallback(async () => {
+  }, [oddsUrl]);
+  const fetchBefore = useCallback(async () => {
     setLoading(l => ({ ...l, before: true }));
     setError(null);
     try {
-      const prompt = `競艇の直前情報（展示タイム・スタート展示）を取得してください。
-以下のURLをweb_searchで検索してください：
-${beforeUrl}
+      const html = await fetchBoatraceHTML(beforeUrl);
+      
+      const prompt = `以下は競艇公式サイトの直前情報ページのHTMLです。
+このHTMLから展示タイム・スタート展示・天候情報を抽出してください。
 
-また「boatrace ${venueName} ${raceNo}R 直前情報 展示タイム ${TODAY}」でも検索してください。
+HTML（先頭5000文字）:
+${html.slice(0, 5000)}
 
-取得した情報を以下のJSON形式のみで返答してください：
+以下のJSON形式のみで返答してください：
 {
-  "weather": "晴",
-  "wind": "北2m",
-  "wave": "3cm",
+  "weather": "天候",
+  "wind": "風向・風速",
+  "wave": "波高",
   "boats": [
     {"no": 1, "playerName": "選手名", "exhibitionTime": "6.70", "startTiming": "0.15", "course": 1},
     {"no": 2, "playerName": "選手名", "exhibitionTime": "6.65", "startTiming": "0.18", "course": 2},
@@ -130,11 +134,62 @@ ${beforeUrl}
   ],
   "fastestBoat": 2,
   "bestStartBoat": 1,
-  "summary": "2号艇の展示タイムが最速。1号艇のスタートが安定している。"
-}
+  "summary": "直前情報のポイント（80字以内）"
+}`;
 
-※情報が取得できない場合でも、一般的な傾向に基づくダミーデータを返してください。`;
-      return (
+      const result = await callClaude(prompt, "あなたは競艇HTMLパーサーAIです。HTMLから必要な情報を抽出してJSON形式のみで回答してください。");
+      setBeforeData(parseJSON(result));
+      setStep(2);
+    } catch (e) {
+      setError("直前情報取得失敗: " + e.message);
+    }
+    setLoading(l => ({ ...l, before: false }));
+  }, [beforeUrl]);
+
+  const generatePrediction = useCallback(async () => {
+    if (!oddsData) return;
+    setLoading(l => ({ ...l, predict: true }));
+    setError(null);
+    try {
+      const beforeInfo = beforeData ? `
+【直前情報】
+天候:${beforeData.weather} 風:${beforeData.wind} 波:${beforeData.wave}
+展示最速: ${beforeData.fastestBoat}号艇 / ST最良: ${beforeData.bestStartBoat}号艇
+各艇: ${JSON.stringify(beforeData.boats)}
+ポイント: ${beforeData.summary}` : "【直前情報】取得なし（オッズのみで予想）";
+
+      const prompt = `競艇${venueName}${raceNo}R の5点予想を立ててください。
+
+【オッズ情報】
+レース: ${oddsData.raceInfo}
+人気上位: ${JSON.stringify(oddsData.topOdds)}
+1着人気艇: ${oddsData.favoriteBoat}号艇
+傾向: ${oddsData.summary}
+${beforeInfo}
+
+以下のJSON形式のみで回答してください：
+{
+  "picks": [
+    {"rank": 1, "combination": "X-Y-Z"},
+    {"rank": 2, "combination": "X-Y-Z"},
+    {"rank": 3, "combination": "X-Y-Z"},
+    {"rank": 4, "combination": "X-Y-Z"},
+    {"rank": 5, "combination": "X-Y-Z"}
+  ],
+  "proComment": "競艇のプロとしての見立てコメント。レース展開・注目艇・狙いどころを具体的に200字程度で記述。"
+}`;
+      const result = await callClaude(prompt, "あなたはプロ競艇予想師AIです。データを客観的に分析しJSON形式のみで回答してください。");
+      setPrediction(parseJSON(result));
+      setStep(3);
+    } catch (e) {
+      setError("予想生成失敗: " + e.message);
+    }
+    setLoading(l => ({ ...l, predict: false }));
+  }, [oddsData, beforeData, venueName, raceNo]);
+
+  const boatBg = ["#fff","#000","#e00","#00e","#d0d000","#006600"];
+  const boatFg = ["#000","#fff","#fff","#fff","#000","#fff"];
+    return (
     <div style={{ minHeight:"100vh", background:"#0b0f1a", fontFamily:"'Noto Sans JP',sans-serif", color:"#dce8ff", padding:"16px", maxWidth:"640px", margin:"0 auto" }}>
       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
       <div style={{ textAlign:"center", marginBottom:"22px", paddingTop:"8px" }}>
@@ -164,8 +219,8 @@ ${beforeUrl}
           <span style={{color:"#00c6fb"}}>直前情報URL: </span>{beforeUrl}
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:"8px" }}>
-          <Btn label="① オッズ取得" sub="公式サイトの人気順・オッズを分析" step={1} cur={step} loading={loading.odds} onClick={fetchOdds} disabled={false} />
-          <Btn label="② 直前情報取得" sub="展示タイム・ST取得（任意・取得できなくてもOK）" step={2} cur={step} loading={loading.before} onClick={fetchBefore} disabled={step<1} />
+          <Btn label="① オッズ取得" sub="公式サイトのHTMLを直接取得して分析" step={1} cur={step} loading={loading.odds} onClick={fetchOdds} disabled={false} />
+          <Btn label="② 直前情報取得" sub="展示タイム・ST取得（出走10分前〜有効）" step={2} cur={step} loading={loading.before} onClick={fetchBefore} disabled={step<1} />
           <Btn label="③ AI予想を生成" sub="データを統合して5点予想を出力" step={3} cur={step} loading={loading.predict} onClick={generatePrediction} disabled={step<1} highlight />
         </div>
       </div>
@@ -264,4 +319,4 @@ ${beforeUrl}
           {copied && (
             <button
               onClick={() => window.open("https://note.com/notes/new", "_blank")}
-              style={{ width:"100%", marginTop:"8px", padding:"12px", background:"rgba(65,161,108,0.1)", border:"1px solid rgba(65,161,108,0.4)", borderRadius:"10px", cursor:"pointer", color:"#41a16c"
+              style={{ width:"100%", marginTop:"8px", padding:"12px", background:"rgba(65,161,108,0.1)", border:"1px solid rgba(65,161,108,0.4)", borderRadius:"10px", cursor:"pointer", color:"#41a16c",

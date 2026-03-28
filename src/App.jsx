@@ -320,3 +320,45 @@ ${beforeInfo}
             <button
               onClick={() => window.open("https://note.com/notes/new", "_blank")}
               style={{ width:"100%", marginTop:"8px", padding:"12px", background:"rgba(65,161,108,0.1)", border:"1px solid rgba(65,161,108,0.4)", borderRadius:"10px", cursor:"pointer", color:"#41a16c",
+     >
+              📝 noteの新規作成ページを開く →
+            </button>
+          )}
+        </Card>
+      )}
+      <div style={{ textAlign:"center", marginTop:"28px", fontSize:"10px", color:"#333", lineHeight:"2" }}>
+        競艇は余裕の範囲でお楽しみください。
+      </div>
+    </div>
+  );
+}
+
+function Btn({ label, sub, step, cur, loading, onClick, disabled, highlight }) {
+  const done = cur >= step;
+  const active = cur === step-1 || done;
+  return (
+    <button onClick={onClick} disabled={disabled||loading} style={{ width:"100%", padding:"13px 16px", textAlign:"left", background:done?"rgba(0,255,136,0.07)":highlight&&active?"rgba(255,215,0,0.08)":active?"rgba(58,123,213,0.08)":"rgba(255,255,255,0.02)", border:`1px solid ${done?"rgba(0,255,136,0.35)":highlight&&active?"rgba(255,215,0,0.4)":active?"rgba(58,123,213,0.35)":"rgba(255,255,255,0.07)"}`, borderRadius:"10px", cursor:disabled?"not-allowed":"pointer", opacity:disabled?0.35:1, transition:"all 0.2s" }}>
+      <div style={{ fontSize:"14px", fontWeight:700, color:done?"#00ff88":highlight&&active?"#ffd700":active?"#3a7bd5":"#555", marginBottom:"3px" }}>
+        {loading?"⏳ 取得中...":done?"✅ "+label:label}
+      </div>
+      <div style={{ fontSize:"11px", color:"#445" }}>{sub}</div>
+    </button>
+  );
+}
+
+function Card({ title, accent, children }) {
+  return (
+    <div style={{ background:"rgba(255,255,255,0.025)", borderRadius:"14px", border:`1px solid ${accent}25`, borderTop:`3px solid ${accent}`, padding:"20px", marginBottom:"16px" }}>
+      <h2 style={{ margin:"0 0 16px", fontSize:"15px", color:accent, fontWeight:700 }}>{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+function Note({ children, style }) {
+  return <div style={{ fontSize:"12px", color:"#8aa0c0", background:"rgba(255,255,255,0.03)", padding:"10px 14px", borderRadius:"8px", lineHeight:"1.7", ...style }}>💡 {children}</div>;
+}
+
+function Tag({ color, children }) {
+  return <span style={{ fontSize:"10px", padding:"2px 7px", borderRadius:"4px", background:`${color}18`, border:`1px solid ${color}50`, color, whiteSpace:"nowrap" }}>{children}</span>;
+}

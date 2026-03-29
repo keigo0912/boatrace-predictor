@@ -68,8 +68,8 @@ export default function BoatRacePredictor() {
   const [copied, setCopied] = useState(false);
 
   const venueName = VENUES.find(v => v.code === venueCode)?.name || "";
-  const oddsUrl = `https://www.boatrace.jp/owpc/pc/race/racelist?rno=${raceNo}&jcd=${venueCode}&hd=${TODAY}`;
-  const beforeUrl = `https://www.boatrace.jp/owpc/pc/race/beforeinfo?rno=${raceNo}&jcd=${venueCode}&hd=${TODAY}`;
+  const oddsUrl = `https://www.boatrace.jp/owsp/sp/race/racelist?rno=${raceNo}&jcd=${venueCode}&hd=${TODAY}`;
+  const beforeUrl = `https://www.boatrace.jp/owsp/sp/race/beforeinfo?rno=${raceNo}&jcd=${venueCode}&hd=${TODAY}`;
 
   const reset = () => { setStep(0); setOddsData(null); setBeforeData(null); setPrediction(null); setError(null); };
 

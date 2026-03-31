@@ -300,7 +300,7 @@ ${beforeInfo}
             onClick={() => {
               const d = new Date();
               const dateStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
-              const text = [
+              const title = `${dateStr} ${venueName}${raceNo}R`;               const body = [
                 `${dateStr} ${venueName}${raceNo}R`,
                 "",
                 ...(prediction.picks || []).map((p, i) => `${i+1}. ${p.combination}`),

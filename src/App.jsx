@@ -300,13 +300,13 @@ ${beforeInfo}
             onClick={() => {
               const d = new Date();
               const dateStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
-              const title = `${dateStr} ${venueName}${raceNo}R`;               const body = [
-                `${dateStr} ${venueName}${raceNo}R`,
-                "",
+              const title = `${dateStr} ${venueName}${raceNo}R`;
+              const body = [
                 ...(prediction.picks || []).map((p, i) => `${i+1}. ${p.combination}`),
                 "",
                 prediction.proComment,
               ].join("\n");
+              const text = title + "\n" + body;
               navigator.clipboard.writeText(text).then(() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 4000);

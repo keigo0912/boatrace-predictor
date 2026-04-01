@@ -46,7 +46,16 @@ async function fileToBase64(file) {
   });
 }
 
+const VENUES = [
+  "桐生","戸田","江戸川","平和島","多摩川","浜名湖","蒲郡","常滑",
+  "津","三国","びわこ","住之江","尼崎","鳴門","丸亀","児島",
+  "宮島","徳山","下関","若松","芦屋","福岡","唐津","大村"
+];
+
 export default function BoatRacePredictor() {
+  const [venue, setVenue] = useState("");
+  const [raceNo, setRaceNo] = useState("");
+  const [deadline, setDeadline] = useState("");
   const [oddsImage, setOddsImage] = useState(null);
   const [beforeImage, setBeforeImage] = useState(null);
   const [oddsPreview, setOddsPreview] = useState(null);
@@ -96,19 +105,19 @@ export default function BoatRacePredictor() {
 1枚目：3連単オッズ（人気順）の画像
 2枚目：展示情報（展示タイム・ST・天候）の画像
 
-今日の日付：${dateStr}
+レース情報：
+- 日付：${dateStr}
+- レース場：${venue || "画像から読み取ってください"}
+- レース番号：${raceNo || "画像から読み取ってください"}
+- 締切時刻：${deadline || "画像から読み取ってください"}
 
 画像から以下を読み取って分析してください：
-- レース場名・レース番号・締切時刻
 - オッズ人気順上位の組番とオッズ
 - 各艇の展示タイム・スタートタイミング・進入コース
 - 天候・風向・風速・波高
 
 以下のJSON形式のみで回答してください：
 {
-  "venue": "レース場名（例：丸亀）",
-  "raceNo": "レース番号（例：4R）",
-  "deadline": "締切時刻（例：16:34）",
   "picks": [
     {"rank": 1, "combination": "X-Y-Z"},
     {"rank": 2, "combination": "X-Y-Z"},
@@ -124,12 +133,18 @@ export default function BoatRacePredictor() {
         "あなたはプロ競艇予想師AIです。画像を詳細に分析してJSON形式のみで回答してください。",
         [oddsB64, beforeB64]
       );
-      setPrediction({ ...parseJSON(result), dateStr });
+      const parsed = parseJSON(result);
+      const d2 = new Date();
+      parsed.dateStr = `${d2.getFullYear()}年${d2.getMonth()+1}月${d2.getDate()}日`;
+      parsed.venue = venue;
+      parsed.raceNo = raceNo;
+      parsed.deadline = deadline;
+      setPrediction(parsed);
     } catch (e) {
       setError("予想生成失敗: " + e.message);
     }
     setLoading(false);
-  }, [oddsImage, beforeImage]);
+  }, [oddsImage, beforeImage, venue, raceNo, deadline]);
 
   const copyTitle = useCallback(() => {
     if (!prediction) return;
@@ -155,7 +170,7 @@ export default function BoatRacePredictor() {
 
   const colors = ["#ffd700","#c0c0c0","#cd7f32","#aaddff","#ffaacc"];
   const labels = ["1点目","2点目","3点目","4点目","5点目"];
-   return (
+  return (
     <div style={{ minHeight:"100vh", background:"#0b0f1a", fontFamily:"'Noto Sans JP',sans-serif", color:"#dce8ff", padding:"16px", maxWidth:"640px", margin:"0 auto" }}>
       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
 
@@ -165,6 +180,53 @@ export default function BoatRacePredictor() {
         <div style={{ height:"1px", background:"linear-gradient(90deg,transparent,#3a7bd5,transparent)", marginTop:"10px" }} />
       </div>
 
+      {/* レース情報入力フォーム */}
+      <div style={{ background:"rgba(58,123,213,0.07)", border:"1px solid rgba(58,123,213,0.25)", borderRadius:"14px", padding:"18px", marginBottom:"16px" }}>
+        <div style={{ fontSize:"11px", color:"#3a7bd5", letterSpacing:"2px", marginBottom:"14px" }}>📝 レース情報を入力</div>
+
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px", marginBottom:"10px" }}>
+          {/* レース場 */}
+          <div style={{ gridColumn:"1 / -1" }}>
+            <label style={{ fontSize:"11px", color:"#3a7bd5", display:"block", marginBottom:"6px" }}>レース場</label>
+            <select
+              value={venue}
+              onChange={e => setVenue(e.target.value)}
+              style={{ width:"100%", padding:"10px 12px", background:"#131929", border:"1px solid rgba(58,123,213,0.3)", borderRadius:"8px", color: venue ? "#dce8ff" : "#555", fontSize:"15px" }}
+            >
+              <option value="" style={{background:"#131929"}}>選択してください</option>
+              {VENUES.map(v => <option key={v} value={v} style={{background:"#131929"}}>{v}</option>)}
+            </select>
+          </div>
+
+          {/* レース番号 */}
+          <div>
+            <label style={{ fontSize:"11px", color:"#3a7bd5", display:"block", marginBottom:"6px" }}>レース番号</label>
+            <select
+              value={raceNo}
+              onChange={e => setRaceNo(e.target.value)}
+              style={{ width:"100%", padding:"10px 12px", background:"#131929", border:"1px solid rgba(58,123,213,0.3)", borderRadius:"8px", color: raceNo ? "#dce8ff" : "#555", fontSize:"15px" }}
+            >
+              <option value="" style={{background:"#131929"}}>選択</option>
+              {[...Array(12)].map((_,i) => (
+                <option key={i+1} value={`${i+1}R`} style={{background:"#131929"}}>{i+1}R</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 締切時刻 */}
+          <div>
+            <label style={{ fontSize:"11px", color:"#3a7bd5", display:"block", marginBottom:"6px" }}>締切時刻</label>
+            <input
+              type="time"
+              value={deadline}
+              onChange={e => setDeadline(e.target.value)}
+              style={{ width:"100%", padding:"10px 12px", background:"#131929", border:"1px solid rgba(58,123,213,0.3)", borderRadius:"8px", color:"#dce8ff", fontSize:"15px", boxSizing:"border-box" }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 画像アップロード */}
       <div style={{ background:"rgba(58,123,213,0.07)", border:"1px solid rgba(58,123,213,0.25)", borderRadius:"14px", padding:"18px", marginBottom:"16px" }}>
         <div style={{ fontSize:"11px", color:"#3a7bd5", letterSpacing:"2px", marginBottom:"14px" }}>📷 スクショをアップロード</div>
 
@@ -239,16 +301,14 @@ export default function BoatRacePredictor() {
           ⚠ {error}
         </div>
       )}
-        {prediction && (
+       {prediction && (
         <div style={{ background:"rgba(255,255,255,0.025)", borderRadius:"14px", border:"1px solid rgba(255,215,0,0.25)", borderTop:"3px solid #ffd700", padding:"20px", marginBottom:"16px" }}>
           <h2 style={{ margin:"0 0 16px", fontSize:"15px", color:"#ffd700", fontWeight:700 }}>🏆 AI予想（5点）</h2>
 
-          {/* 検出されたレース情報 */}
-          {(prediction.venue || prediction.raceNo || prediction.deadline) && (
-            <div style={{ background:"rgba(255,215,0,0.06)", border:"1px solid rgba(255,215,0,0.2)", borderRadius:"10px", padding:"12px 16px", marginBottom:"16px", fontSize:"13px", color:"#ffd700" }}>
-              📍 {prediction.dateStr} {prediction.venue}{prediction.raceNo} {prediction.deadline && `${prediction.deadline}〆切`}
-            </div>
-          )}
+          {/* レース情報表示 */}
+          <div style={{ background:"rgba(255,215,0,0.06)", border:"1px solid rgba(255,215,0,0.2)", borderRadius:"10px", padding:"12px 16px", marginBottom:"16px", fontSize:"13px", color:"#ffd700" }}>
+            📍 {prediction.dateStr} {prediction.venue}{prediction.raceNo} {prediction.deadline && `${prediction.deadline}〆切`}
+          </div>
 
           {/* 5点予想 */}
           <div style={{ display:"grid", gap:"8px", marginBottom:"20px" }}>
@@ -262,45 +322,39 @@ export default function BoatRacePredictor() {
           </div>
 
           {/* プロコメント */}
-          <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:"10px", padding:"16px", marginBottom:"16px" }}>
+          <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:"10px", padding:"16px", marginBottom:"20px" }}>
             <div style={{ fontSize:"10px", color:"#3a7bd5", letterSpacing:"2px", marginBottom:"10px" }}>プロの見立て</div>
             <div style={{ fontSize:"13px", color:"#c0d8ff", lineHeight:"1.9" }}>{prediction.proComment}</div>
           </div>
 
-          {/* 題名コピーボタン */}
-          <div style={{ fontSize:"11px", color:"#3a7bd5", letterSpacing:"2px", marginBottom:"8px" }}>noteへのコピー</div>
-          <button
-            onClick={copyTitle}
-            style={{
-              width:"100%", padding:"13px",
-              background: copiedTitle ? "rgba(0,255,136,0.12)" : "rgba(58,123,213,0.08)",
-              border:`1px solid ${copiedTitle ? "rgba(0,255,136,0.5)" : "rgba(58,123,213,0.35)"}`,
-              borderRadius:"10px", cursor:"pointer", transition:"all 0.3s",
-              color: copiedTitle ? "#00ff88" : "#3a7bd5", fontSize:"14px", fontWeight:700,
-              marginBottom:"8px",
-            }}
-          >
-            {copiedTitle ? "✅ 題名をコピーしました！" : "📋 ① 題名をコピー"}
+          {/* noteコピーボタン */}
+          <div style={{ fontSize:"11px", color:"#3a7bd5", letterSpacing:"2px", marginBottom:"10px" }}>📋 noteへコピー</div>
+
+          {/* 題名コピー */}
+          <button onClick={copyTitle} style={{
+            width:"100%", padding:"13px", marginBottom:"8px",
+            background: copiedTitle ? "rgba(0,255,136,0.12)" : "rgba(58,123,213,0.08)",
+            border:`1px solid ${copiedTitle ? "rgba(0,255,136,0.5)" : "rgba(58,123,213,0.35)"}`,
+            borderRadius:"10px", cursor:"pointer", transition:"all 0.3s",
+            color: copiedTitle ? "#00ff88" : "#3a7bd5", fontSize:"14px", fontWeight:700,
+          }}>
+            {copiedTitle ? "✅ 題名コピー完了！" : "① 題名をコピー"}
           </button>
           {copiedTitle && (
-            <div style={{ fontSize:"12px", color:"#666", textAlign:"center", marginBottom:"8px" }}>
+            <div style={{ fontSize:"11px", color:"#555", textAlign:"center", marginBottom:"8px", padding:"6px", background:"rgba(255,255,255,0.03)", borderRadius:"6px" }}>
               {prediction.dateStr} {prediction.venue}{prediction.raceNo} {prediction.deadline}〆切
             </div>
           )}
 
-          {/* 本文コピーボタン */}
-          <button
-            onClick={copyBody}
-            style={{
-              width:"100%", padding:"13px",
-              background: copiedBody ? "rgba(0,255,136,0.12)" : "rgba(255,215,0,0.08)",
-              border:`1px solid ${copiedBody ? "rgba(0,255,136,0.5)" : "rgba(255,215,0,0.35)"}`,
-              borderRadius:"10px", cursor:"pointer", transition:"all 0.3s",
-              color: copiedBody ? "#00ff88" : "#ffd700", fontSize:"14px", fontWeight:700,
-              marginBottom:"8px",
-            }}
-          >
-            {copiedBody ? "✅ 本文をコピーしました！" : "📋 ② 本文をコピー"}
+          {/* 本文コピー */}
+          <button onClick={copyBody} style={{
+            width:"100%", padding:"13px", marginBottom:"8px",
+            background: copiedBody ? "rgba(0,255,136,0.12)" : "rgba(255,215,0,0.08)",
+            border:`1px solid ${copiedBody ? "rgba(0,255,136,0.5)" : "rgba(255,215,0,0.35)"}`,
+            borderRadius:"10px", cursor:"pointer", transition:"all 0.3s",
+            color: copiedBody ? "#00ff88" : "#ffd700", fontSize:"14px", fontWeight:700,
+          }}>
+            {copiedBody ? "✅ 本文コピー完了！" : "② 本文をコピー"}
           </button>
 
           {/* noteを開くボタン */}

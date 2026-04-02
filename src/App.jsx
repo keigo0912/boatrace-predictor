@@ -376,6 +376,36 @@ export default function BoatRacePredictor() {
             {copiedBody ? "✅ 本文コピー完了！" : "② 本文をコピー"}
           </button>
 
+             {/* サムネイル */}
+          <div style={{ marginBottom:"16px" }}>
+            <div style={{ fontSize:"11px", color:"#3a7bd5", letterSpacing:"2px", marginBottom:"10px" }}>🖼 noteサムネイル</div>
+            <button onClick={randomThumb} style={{
+              width:"100%", padding:"12px",
+              background:"rgba(58,123,213,0.08)", border:"1px solid rgba(58,123,213,0.35)",
+              borderRadius:"10px", cursor:"pointer", color:"#3a7bd5",
+              fontSize:"14px", fontWeight:700, marginBottom:"10px",
+            }}>
+              🎲 サムネイルをランダム選択
+            </button>
+            {thumbnail && (
+              <div style={{ textAlign:"center" }}>
+                <img src={thumbnail} alt="サムネイル" style={{ maxWidth:"100%", maxHeight:"200px", borderRadius:"10px", marginBottom:"10px" }} />
+                <a
+                  href={thumbnail}
+                  download
+                  style={{
+                    display:"block", padding:"11px",
+                    background:"rgba(0,198,251,0.08)", border:"1px solid rgba(0,198,251,0.35)",
+                    borderRadius:"10px", color:"#00c6fb",
+                    fontSize:"13px", fontWeight:700, textDecoration:"none", textAlign:"center",
+                  }}
+                >
+                  ⬇ この画像をダウンロード
+                </a>
+              </div>
+            )}
+          </div>
+
           {/* noteを開くボタン */}
           {(copiedTitle || copiedBody) && (
             <button

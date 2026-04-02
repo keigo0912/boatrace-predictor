@@ -47,16 +47,16 @@ async function fileToBase64(file) {
 }
 
 const THUMBNAILS = [
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222801.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222802.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222803.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222804.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222805.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222807.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222808.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222809.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222810.jpg",
-  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222811.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222801.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222802.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222803.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222804.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222805.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222807.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222808.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222809.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222810.jpg",
+  "https://raw.githubusercontent.com/keigo0912/boatrace-predictor/main/public/thumbnails/S_40222811.jpg",
 ];
 
 const VENUES = [

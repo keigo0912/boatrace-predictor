@@ -46,6 +46,19 @@ async function fileToBase64(file) {
   });
 }
 
+const THUMBNAILS = [
+  "/thumbnails/S_40222801.jpg",
+  "/thumbnails/S_40222802.jpg",
+  "/thumbnails/S_40222803.jpg",
+  "/thumbnails/S_40222804.jpg",
+  "/thumbnails/S_40222805.jpg",
+  "/thumbnails/S_40222807.jpg",
+  "/thumbnails/S_40222808.jpg",
+  "/thumbnails/S_40222809.jpg",
+  "/thumbnails/S_40222810.jpg",
+  "/thumbnails/S_40222811.jpg",
+];
+
 const VENUES = [
   "桐生","戸田","江戸川","平和島","多摩川","浜名湖","蒲郡","常滑",
   "津","三国","びわこ","住之江","尼崎","鳴門","丸亀","児島",

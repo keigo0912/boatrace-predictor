@@ -182,6 +182,11 @@ export default function BoatRacePredictor() {
     });
   }, [prediction]);
 
+  const randomThumb = useCallback(() => {
+    const idx = Math.floor(Math.random() * THUMBNAILS.length);
+    setThumbnail(THUMBNAILS[idx]);
+  }, []);
+
   const colors = ["#ffd700","#c0c0c0","#cd7f32","#aaddff","#ffaacc"];
   const labels = ["1点目","2点目","3点目","4点目","5点目"];
   return (

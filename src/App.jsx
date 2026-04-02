@@ -47,16 +47,16 @@ async function fileToBase64(file) {
 }
 
 const THUMBNAILS = [
-  "/thumbnails/S_40222801.jpg",
-  "/thumbnails/S_40222802.jpg",
-  "/thumbnails/S_40222803.jpg",
-  "/thumbnails/S_40222804.jpg",
-  "/thumbnails/S_40222805.jpg",
-  "/thumbnails/S_40222807.jpg",
-  "/thumbnails/S_40222808.jpg",
-  "/thumbnails/S_40222809.jpg",
-  "/thumbnails/S_40222810.jpg",
-  "/thumbnails/S_40222811.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222801.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222802.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222803.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222804.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222805.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222807.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222808.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222809.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222810.jpg",
+  "https://boatrace-predictor-lemon.vercel.app/thumbnails/S_40222811.jpg",
 ];
 
 const VENUES = [

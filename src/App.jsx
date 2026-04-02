@@ -78,6 +78,7 @@ export default function BoatRacePredictor() {
   const [error, setError] = useState(null);
   const [copiedTitle, setCopiedTitle] = useState(false);
   const [copiedBody, setCopiedBody] = useState(false);
+  const [thumbnail, setThumbnail] = useState(null);
 
   const handleOddsImage = useCallback((e) => {
     const file = e.target.files[0];

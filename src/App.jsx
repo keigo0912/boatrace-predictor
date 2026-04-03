@@ -408,14 +408,7 @@ export default function BoatRacePredictor() {
 >
   ↓ この画像をダウンロード＆noteを開く
 </a>
-                <button
-  onClick={() => window.open("https://note.com/notes/new", "_blank")}
-  style={{ width:"100%", padding:"12px", marginTop:"8px",
-  background:"rgba(65,161,108,0.1)", border:"1px solid rgba(65,161,108,0.4)",
-  borderRadius:"10px", color:"#00c6fb", fontSize:"13px", fontWeight:700, cursor:"pointer" }}
->
-  📝 noteの新規作成ページを開く →
-</button>
+               
               </div>
             )}
           </div>

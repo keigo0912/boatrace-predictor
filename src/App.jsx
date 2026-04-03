@@ -364,7 +364,12 @@ export default function BoatRacePredictor() {
               {prediction.dateStr} {prediction.venue}{prediction.raceNo} {prediction.deadline}〆切
             </div>
           )}
-
+<textarea
+  style={{ width:"100%", height:"72px", marginBottom:"8px",
+  background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.2)",
+  borderRadius:"10px", color:"#fff", padding:"10px", fontSize:"13px" }}
+  placeholder="ここにメモを入力..."
+/>
           {/* 本文コピー */}
           <button onClick={copyBody} style={{
             width:"100%", padding:"13px", marginBottom:"8px",
@@ -402,6 +407,14 @@ export default function BoatRacePredictor() {
                 >
                   ⬇ この画像をダウンロード
                 </a>
+                <button
+  onClick={() => window.open("https://note.com/notes/new", "_blank")}
+  style={{ width:"100%", padding:"12px", marginTop:"8px",
+  background:"rgba(65,161,108,0.1)", border:"1px solid rgba(65,161,108,0.4)",
+  borderRadius:"10px", color:"#00c6fb", fontSize:"13px", fontWeight:700, cursor:"pointer" }}
+>
+  📝 noteの新規作成ページを開く →
+</button>
               </div>
             )}
           </div>

@@ -395,19 +395,23 @@ export default function BoatRacePredictor() {
             {thumbnail && (
               <div style={{ textAlign:"center" }}>
                 <img src={thumbnail} alt="サムネイル" style={{ maxWidth:"100%", maxHeight:"200px", borderRadius:"10px", marginBottom:"10px" }} />
-                <a
-  href={thumbnail}
-  download
-  onClick={() => setTimeout(() => window.open("https://note.com/notes/new", "_blank"), 500)}
+                <button
+  onClick={() => {
+    const link = document.createElement("a");
+    link.href = thumbnail;
+    link.download = "thumbnail.jpg";
+    link.click();
+    setTimeout(() => window.open("https://note.com/notes/new", "_blank"), 1000);
+  }}
   style={{
-    display:"block", padding:"11px",
+    display:"block", width:"100%", padding:"11px",
     background:"rgba(0,198,251,0.08)", border:"1px solid rgba(0,198,251,0.35)",
     borderRadius:"10px", color:"#00c6fb",
-    fontSize:"13px", fontWeight:700, textDecoration:"none", textAlign:"center",
+    fontSize:"13px", fontWeight:700, cursor:"pointer", textAlign:"center",
   }}
 >
   ↓ この画像をダウンロード＆noteを開く
-</a>
+</button>
                
               </div>
             )}

@@ -162,7 +162,7 @@ export default function BoatRacePredictor() {
 
   const copyTitle = useCallback(() => {
     if (!prediction) return;
-    const title = `${prediction.dateStr} ${prediction.venue}${prediction.raceNo} ${prediction.deadline}〆切`;
+   const title = `⭐${prediction.venue}${prediction.raceNo}${prediction.deadline}〆切 ⭐${prediction.dateStr} ⭐`;
     navigator.clipboard.writeText(title).then(() => {
       setCopiedTitle(true);
       setTimeout(() => setCopiedTitle(false), 3000);
@@ -181,6 +181,17 @@ export default function BoatRacePredictor() {
       setTimeout(() => setCopiedBody(false), 3000);
     });
   }, [prediction]);
+  const copyAll = useCallback(() => {
+  if (!prediction) return;
+  const title = `⭐${prediction.venue}${prediction.raceNo}${prediction.deadline}〆切 ⭐${prediction.dateStr} ⭐`;
+  const body = [
+    ...(prediction.picks || []).map((p, i) => `${i+1}. ${p.combination}`),
+    "",
+    prediction.proComment,
+  ].join("\n");
+  const all = `${title}\n\n${body}`;
+  navigator.clipboard.writeText(all);
+}, [prediction]);
 
   const randomThumb = useCallback(() => {
     const idx = Math.floor(Math.random() * THUMBNAILS.length);
